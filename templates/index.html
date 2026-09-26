@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f8fb" />
+    <meta
+      name="description"
+      content="Smart Route Planner — shortest path navigation and route optimization."
+    />
+    <title>Smart Route Planner</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-icon" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <div>
+            <h1>SMART ROUTE PLANNER</h1>
+            <p>Shortest path navigation and route optimization</p>
+          </div>
+        </div>
+        <nav class="mode-tabs" aria-label="Algorithm view">
+          <button class="mode-tab active" id="route-tab" type="button" data-mode="route">
+            <span>ROUTE PLANNER</span>
+            <small>DIJKSTRA</small>
+          </button>
+          <button class="mode-tab" id="mst-tab" type="button" data-mode="mst">
+            <span>MINIMUM SPANNING TREE</span>
+            <small>KRUSKAL</small>
+          </button>
+        </nav>
+        <div class="topbar-actions">
+          <span class="network-status"><i></i><span id="status-text">Live network</span></span>
+          <button class="button button-outline" id="edit-map-button" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
+            Edit map
+          </button>
+        </div>
+      </header>
+
+      <main class="map-stage">
+        <div id="map" aria-label="Interactive road network map"></div>
+
+        <section class="floating-panel search-panel" aria-label="Location search">
+          <div class="panel-label">Explore the network</div>
+          <div class="search-input-wrap">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+            <input id="location-search" type="search" placeholder="Search a location" autocomplete="off" />
+            <button class="icon-button" id="clear-search" type="button" aria-label="Clear search">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+            </button>
+          </div>
+          <div class="search-results" id="search-results"></div>
+        </section>
+
+        <section class="floating-panel route-panel route-planner-panel" aria-label="Route search">
+          <div class="panel-heading">
+            <div>
+              <div class="panel-label">Plan a route</div>
+              <h2>Find the shortest path</h2>
+            </div>
+            <div class="route-chip"><span></span> Dijkstra</div>
+          </div>
+          <form id="route-form">
+            <div class="route-fields">
+              <label class="select-field source-field">
+                <span>From</span>
+                <div class="select-wrap">
+                  <i class="location-dot source-dot"></i>
+                  <select id="source-select" required>
+                    <option value="">Select starting point</option>
+                  </select>
+                </div>
+              </label>
+              <button class="swap-button" id="swap-locations" type="button" aria-label="Swap source and destination">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h11l-3-3"/><path d="m17 7-3 3"/><path d="M17 17H6l3 3"/><path d="m7 17 3-3"/></svg>
+              </button>
+              <label class="select-field">
+                <span>To</span>
+                <div class="select-wrap">
+                  <i class="location-dot destination-dot"></i>
+                  <select id="destination-select" required>
+                    <option value="">Select destination</option>
+                  </select>
+                </div>
+              </label>
+            </div>
+            <button class="button button-primary route-submit" type="submit">
+              <span>Find shortest route</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+            </button>
+          </form>
+          <div class="route-result" id="route-result" hidden>
+            <div class="result-topline">
+              <div class="result-label"><span class="result-pulse"></span> Shortest route found</div>
+              <button class="text-button" id="clear-route" type="button">Clear</button>
+            </div>
+            <div class="route-name" id="route-name"></div>
+            <div class="route-metrics">
+              <div><strong id="route-distance">—</strong><span>Distance</span></div>
+              <div><strong id="route-nodes">—</strong><span>Nodes</span></div>
+              <div><strong id="route-edges">—</strong><span>Roads checked</span></div>
+              <div><strong id="route-time">—</strong><span>Time</span></div>
+            </div>
+            <button class="button button-secondary animation-button" id="animate-route" type="button">
+              <svg id="animation-button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7Z"/></svg>
+              <span id="animation-button-label">Show route animation</span>
+            </button>
+            <div class="animation-options" id="animation-options" hidden>
+              <span>Animation speed</span>
+              <div class="speed-buttons" role="group" aria-label="Animation speed">
+                <button type="button" data-speed="slow">Slow</button>
+                <button class="active" type="button" data-speed="normal">Normal</button>
+                <button type="button" data-speed="fast">Fast</button>
+              </div>
+            </div>
+            <div class="animation-status" id="animation-status" hidden>
+              <div class="animation-status-head">
+                <span><i class="animation-live-dot"></i><strong id="animation-status-title">Dijkstra is evaluating</strong></span>
+                <strong id="animation-step-count">0 / 0</strong>
+              </div>
+              <div class="animation-progress"><span id="animation-progress-bar"></span></div>
+              <p id="animation-current-step">Preparing the priority queue…</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="floating-panel route-panel mst-panel" id="mst-panel" aria-label="Minimum spanning tree" hidden>
+          <div class="panel-heading">
+            <div>
+              <div class="panel-label">Build a network backbone</div>
+              <h2>Minimum spanning tree</h2>
+            </div>
+            <div class="route-chip mst-chip"><span></span> Kruskal</div>
+          </div>
+          <p class="panel-description">Use every current location and road to find the lowest-distance connected network.</p>
+          <button class="button button-primary route-submit" id="run-kruskal" type="button">
+            <span>Run Kruskal</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+          </button>
+          <div class="mst-result" id="mst-result" hidden>
+            <div class="result-topline">
+              <div class="result-label mst-result-label"><span class="result-pulse"></span> Minimum spanning tree</div>
+              <button class="text-button" id="clear-mst" type="button">Clear</button>
+            </div>
+            <div class="mst-metrics">
+              <div><strong id="mst-distance">—</strong><span>Total distance</span></div>
+              <div><strong id="mst-locations">—</strong><span>Locations</span></div>
+              <div><strong id="mst-selected">—</strong><span>Edges selected</span></div>
+              <div><strong id="mst-examined">—</strong><span>Edges examined</span></div>
+            </div>
+            <div class="mst-runtime"><span>Execution time</span><strong id="mst-time">—</strong></div>
+            <button class="button button-secondary animation-button" id="animate-mst" type="button">
+              <svg id="mst-animation-button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7Z"/></svg>
+              <span id="mst-animation-button-label">Show Kruskal animation</span>
+            </button>
+            <div class="animation-options" id="mst-animation-options" hidden>
+              <span>Animation speed</span>
+              <div class="speed-buttons mst-speed-buttons" role="group" aria-label="Kruskal animation speed">
+                <button type="button" data-mst-speed="slow">Slow</button>
+                <button class="active" type="button" data-mst-speed="normal">Normal</button>
+                <button type="button" data-mst-speed="fast">Fast</button>
+              </div>
+            </div>
+            <div class="animation-status" id="mst-status" hidden>
+              <div class="animation-status-head">
+                <span><i class="animation-live-dot"></i><strong id="mst-status-title">Kruskal is evaluating</strong></span>
+                <strong id="mst-step-count">0 / 0</strong>
+              </div>
+              <div class="animation-progress"><span id="mst-progress-bar"></span></div>
+              <p id="mst-current-step">Preparing the sorted edge list…</p>
+            </div>
+            <div class="mst-edge-list" id="mst-edge-list"></div>
+          </div>
+        </section>
+
+        <div class="map-actions">
+          <button class="map-action-button" id="add-on-map-button" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            Add location on map
+          </button>
+          <button class="map-action-button" id="reset-map-button" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v6h6"/></svg>
+            Reset map
+          </button>
+        </div>
+
+        <div class="map-legend">
+          <span><i class="legend-line network-line"></i> Road network</span>
+          <span><i class="legend-line route-line"></i> Selected route</span>
+          <span id="mst-legend" hidden><i class="legend-line mst-line"></i> MST edge</span>
+        </div>
+
+        <div class="map-hint" id="map-hint" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.5 7-12a7 7 0 1 0-14 0c0 6.5 7 12 7 12Z"/><circle cx="12" cy="9" r="2"/></svg>
+          Click anywhere on the map to add a location
+          <button id="cancel-map-mode" type="button">Cancel</button>
+        </div>
+      </main>
+    </div>
+
+    <aside class="edit-drawer" id="edit-drawer" aria-label="Edit map" aria-hidden="true">
+      <div class="drawer-header">
+        <div>
+          <div class="panel-label">Network controls</div>
+          <h2>Edit map</h2>
+          <p>Changes are applied instantly to the live graph.</p>
+        </div>
+        <button class="icon-button drawer-close" id="close-drawer" type="button" aria-label="Close edit map">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+      <div class="drawer-body">
+        <section class="editor-section">
+          <div class="section-title"><span class="section-index">01</span><h3>Add location</h3></div>
+          <form id="location-form" class="editor-form">
+            <label>Location name<input id="location-name" type="text" placeholder="e.g. Ahmedabad" required /></label>
+            <div class="form-grid">
+              <label>Latitude<input id="location-lat" type="number" step="any" placeholder="23.0225" required /></label>
+              <label>Longitude<input id="location-lng" type="number" step="any" placeholder="72.5714" required /></label>
+            </div>
+            <button class="button button-primary full-width" type="submit">Add location</button>
+          </form>
+        </section>
+        <section class="editor-section">
+          <div class="section-title"><span class="section-index">02</span><h3>Add road</h3></div>
+          <form id="road-form" class="editor-form">
+            <div class="form-grid">
+              <label>From<select id="road-from" required></select></label>
+              <label>To<select id="road-to" required></select></label>
+            </div>
+            <label>Distance <span class="label-unit">km</span><input id="road-distance" type="number" min="0.1" step="0.1" placeholder="e.g. 85" required /></label>
+            <button class="button button-primary full-width" type="submit">Add road</button>
+          </form>
+        </section>
+        <section class="editor-section road-editor-section">
+          <div class="section-title"><span class="section-index">03</span><h3>Edit road</h3></div>
+          <p class="section-help">Click any road on the map or select one here to update its distance.</p>
+          <select class="road-picker" id="road-picker">
+            <option value="">Select a road</option>
+          </select>
+          <div class="road-edit-controls" id="road-edit-controls" hidden>
+            <div class="road-edit-name" id="selected-road-name"></div>
+            <div class="inline-edit">
+              <input id="edit-road-distance" type="number" min="0.1" step="0.1" />
+              <span>km</span>
+              <button class="button button-primary" id="save-road-button" type="button">Save</button>
+            </div>
+            <button class="delete-link" id="delete-road-button" type="button">Delete this road</button>
+          </div>
+        </section>
+        <section class="editor-section">
+          <div class="section-title"><span class="section-index">04</span><h3>Delete location</h3></div>
+          <p class="section-help">Connected roads are removed automatically.</p>
+          <div class="delete-location-row">
+            <select id="delete-location-select"><option value="">Select a location</option></select>
+            <button class="icon-delete-button" id="delete-location-button" type="button" aria-label="Delete selected location">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
+            </button>
+          </div>
+        </section>
+      </div>
+      <div class="drawer-footer">
+        <button class="button button-danger-outline full-width" id="drawer-reset-button" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v6h6"/></svg>
+          Restore default network
+        </button>
+      </div>
+    </aside>
+    <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+
+    <div class="toast-region" id="toast-region" aria-live="polite"></div>
+    <div class="map-modal" id="map-modal" hidden>
+      <div class="map-modal-card">
+        <div class="modal-kicker">New point</div>
+        <h2>Add a location</h2>
+        <p id="map-coordinates"></p>
+        <form id="map-location-form" class="editor-form">
+          <label>Location name<input id="map-location-name" type="text" placeholder="e.g. Gandhinagar" required autofocus /></label>
+          <div class="modal-actions">
+            <button class="button button-outline" id="cancel-modal" type="button">Cancel</button>
+            <button class="button button-primary" type="submit">Add location</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      crossorigin=""
+    ></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

@@ -1,0 +1,246 @@
+{
+  "locations": [
+    {
+      "id": "ahmedabad",
+      "name": "Ahmedabad",
+      "lat": 23.0225,
+      "lng": 72.5714
+    },
+    {
+      "id": "gandhinagar",
+      "name": "Gandhinagar",
+      "lat": 23.2156,
+      "lng": 72.6369
+    },
+    {
+      "id": "mehsana",
+      "name": "Mehsana",
+      "lat": 23.588,
+      "lng": 72.3693
+    },
+    {
+      "id": "palanpur",
+      "name": "Palanpur",
+      "lat": 24.1713,
+      "lng": 72.4382
+    },
+    {
+      "id": "vadodara",
+      "name": "Vadodara",
+      "lat": 22.3072,
+      "lng": 73.1812
+    },
+    {
+      "id": "anand",
+      "name": "Anand",
+      "lat": 22.5645,
+      "lng": 72.9289
+    },
+    {
+      "id": "bharuch",
+      "name": "Bharuch",
+      "lat": 21.7051,
+      "lng": 72.9959
+    },
+    {
+      "id": "surat",
+      "name": "Surat",
+      "lat": 21.1702,
+      "lng": 72.8311
+    },
+    {
+      "id": "navsari",
+      "name": "Navsari",
+      "lat": 20.9467,
+      "lng": 72.952
+    },
+    {
+      "id": "valsad",
+      "name": "Valsad",
+      "lat": 20.5992,
+      "lng": 72.9342
+    },
+    {
+      "id": "rajkot",
+      "name": "Rajkot",
+      "lat": 22.3039,
+      "lng": 70.8022
+    },
+    {
+      "id": "bhavnagar",
+      "name": "Bhavnagar",
+      "lat": 21.7645,
+      "lng": 72.1519
+    },
+    {
+      "id": "udaipur",
+      "name": "Udaipur",
+      "lat": 24.5854,
+      "lng": 73.7125
+    },
+    {
+      "id": "nashik",
+      "name": "Nashik",
+      "lat": 19.9975,
+      "lng": 73.7898
+    },
+    {
+      "id": "mumbai",
+      "name": "Mumbai",
+      "lat": 19.076,
+      "lng": 72.8777
+    }
+  ],
+  "roads": [
+    {
+      "id": "road-ahmedabad-gandhinagar",
+      "from": "ahmedabad",
+      "to": "gandhinagar",
+      "distance": 30
+    },
+    {
+      "id": "road-ahmedabad-mehsana",
+      "from": "ahmedabad",
+      "to": "mehsana",
+      "distance": 75
+    },
+    {
+      "id": "road-mehsana-palanpur",
+      "from": "mehsana",
+      "to": "palanpur",
+      "distance": 130
+    },
+    {
+      "id": "road-palanpur-udaipur",
+      "from": "palanpur",
+      "to": "udaipur",
+      "distance": 260
+    },
+    {
+      "id": "road-ahmedabad-palanpur",
+      "from": "ahmedabad",
+      "to": "palanpur",
+      "distance": 125
+    },
+    {
+      "id": "road-ahmedabad-vadodara",
+      "from": "ahmedabad",
+      "to": "vadodara",
+      "distance": 115
+    },
+    {
+      "id": "road-ahmedabad-anand",
+      "from": "ahmedabad",
+      "to": "anand",
+      "distance": 45
+    },
+    {
+      "id": "road-anand-vadodara",
+      "from": "anand",
+      "to": "vadodara",
+      "distance": 45
+    },
+    {
+      "id": "road-vadodara-bharuch",
+      "from": "vadodara",
+      "to": "bharuch",
+      "distance": 75
+    },
+    {
+      "id": "road-bharuch-surat",
+      "from": "bharuch",
+      "to": "surat",
+      "distance": 75
+    },
+    {
+      "id": "road-surat-navsari",
+      "from": "surat",
+      "to": "navsari",
+      "distance": 35
+    },
+    {
+      "id": "road-navsari-valsad",
+      "from": "navsari",
+      "to": "valsad",
+      "distance": 65
+    },
+    {
+      "id": "road-valsad-mumbai",
+      "from": "valsad",
+      "to": "mumbai",
+      "distance": 185
+    },
+    {
+      "id": "road-surat-mumbai",
+      "from": "surat",
+      "to": "mumbai",
+      "distance": 280
+    },
+    {
+      "id": "road-vadodara-rajkot",
+      "from": "vadodara",
+      "to": "rajkot",
+      "distance": 220
+    },
+    {
+      "id": "road-rajkot-bhavnagar",
+      "from": "rajkot",
+      "to": "bhavnagar",
+      "distance": 170
+    },
+    {
+      "id": "road-bhavnagar-ahmedabad",
+      "from": "bhavnagar",
+      "to": "ahmedabad",
+      "distance": 180
+    },
+    {
+      "id": "road-bhavnagar-vadodara",
+      "from": "bhavnagar",
+      "to": "vadodara",
+      "distance": 170
+    },
+    {
+      "id": "road-udaipur-ahmedabad",
+      "from": "udaipur",
+      "to": "ahmedabad",
+      "distance": 260
+    },
+    {
+      "id": "road-udaipur-rajkot",
+      "from": "udaipur",
+      "to": "rajkot",
+      "distance": 390
+    },
+    {
+      "id": "road-ahmedabad-rajkot",
+      "from": "ahmedabad",
+      "to": "rajkot",
+      "distance": 215
+    },
+    {
+      "id": "road-nashik-mumbai",
+      "from": "nashik",
+      "to": "mumbai",
+      "distance": 165
+    },
+    {
+      "id": "road-nashik-valsad",
+      "from": "nashik",
+      "to": "valsad",
+      "distance": 175
+    },
+    {
+      "id": "road-nashik-surat",
+      "from": "nashik",
+      "to": "surat",
+      "distance": 250
+    },
+    {
+      "id": "road-mumbai-bharuch",
+      "from": "mumbai",
+      "to": "bharuch",
+      "distance": 365
+    }
+  ]
+}

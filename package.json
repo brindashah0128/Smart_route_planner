@@ -1,0 +1,13 @@
+{
+  "name": "@workspace/smart-route-planner",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "python app.py",
+    "build": "mkdir -p dist/public && cp -r templates static dist/public/",
+    "serve": "python app.py"
+  },
+  "dependencies": {
+    "flask": "3.1.3"
+  }
+}
