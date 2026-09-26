@@ -172,16 +172,7 @@ Enter the cloned repository:
 cd REPOSITORY
 ```
 
-If this project is inside a larger workspace, enter the Smart Route Planner
-directory:
-
-```bash
-cd artifacts/smart-route-planner
-```
-
 ### 2. Install Python dependencies
-
-From `artifacts/smart-route-planner/`:
 
 ```bash
 python -m pip install -r requirements.txt
@@ -209,10 +200,6 @@ Stop the server with `Ctrl+C`.
 
 ## Run commands
 
-### Standalone Flask commands
-
-Run from `artifacts/smart-route-planner/`:
-
 ```bash
 python app.py
 ```
@@ -227,20 +214,6 @@ Then open:
 
 ```text
 http://127.0.0.1:8000
-```
-
-### Workspace command
-
-From the repository root, if the workspace uses the configured package:
-
-```bash
-pnpm --filter @workspace/smart-route-planner run dev
-```
-
-The package's development script starts the Flask server:
-
-```text
-python app.py
 ```
 
 ## Using the application
