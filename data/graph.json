@@ -89,6 +89,12 @@
       "name": "Mumbai",
       "lat": 19.076,
       "lng": 72.8777
+    },
+    {
+      "id": "porbandar",
+      "name": "Porbandar",
+      "lat": 21.673809,
+      "lng": 69.6698
     }
   ],
   "roads": [
@@ -241,6 +247,12 @@
       "from": "mumbai",
       "to": "bharuch",
       "distance": 365
+    },
+    {
+      "id": "road-rajkot-porbandar",
+      "from": "rajkot",
+      "to": "porbandar",
+      "distance": 180.0
     }
   ]
 }
