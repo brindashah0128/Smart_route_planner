@@ -14,7 +14,7 @@ from flask import Flask, jsonify, render_template, request
 
 
 BASE_DIR = Path(__file__).resolve().parent
-DATA_PATH = BASE_DIR / "data" / "graph.json"
+DATA_PATH = Path(os.environ.get("GRAPH_DATA_PATH", str(BASE_DIR / "data" / "graph.json")))
 GRAPH_LOCK = threading.RLock()
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
